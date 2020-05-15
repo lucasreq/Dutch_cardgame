@@ -1,6 +1,7 @@
 const server = require('express')();
 const http = require('http').createServer(server);
 const io = require('socket.io')(http);
+let turnA = true
 let players = [];
 
 io.on('connection', function (socket) {
@@ -19,11 +20,16 @@ io.on('connection', function (socket) {
 
     socket.on('cardPlayed', function (gameObject, isPlayerA) {
         io.emit('cardPlayed', gameObject, isPlayerA);
+        turnA = !turnA;
     });
 
     socket.on('disconnect', function () {
         console.log('A user disconnected: ' + socket.id);
         players = players.filter(player => player !== socket.id);
+    });
+
+    socket.on('isTurnA',function () {
+        return turnA
     });
 });
 
